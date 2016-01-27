@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <utmpx.h>
 
-void fce(void) {
+void fce(void)
+{
 
     struct utmpx ut;
 
@@ -15,9 +16,9 @@ void fce(void) {
     endutxent();
 }
 
-int main(void) {
+int main(void)
+{
 
     printf("#define HASUTMPX 1\n");
     return 0;
 }
-

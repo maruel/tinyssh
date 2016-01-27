@@ -9,14 +9,14 @@ The 'global' library also has space
 for 2 versatile buffers.
 */
 
-#include <unistd.h>
-#include "newenv.h"
-#include "channel.h"
-#include "packet.h"
-#include "sshcrypto.h"
-#include "purge.h"
-#include "trymlock.h"
 #include "global.h"
+#include "channel.h"
+#include "newenv.h"
+#include "packet.h"
+#include "purge.h"
+#include "sshcrypto.h"
+#include "trymlock.h"
+#include <unistd.h>
 
 unsigned char global_bspace1[GLOBAL_BSIZE];
 unsigned char global_bspace2[GLOBAL_BSIZE];
@@ -24,7 +24,8 @@ unsigned char global_bspace2[GLOBAL_BSIZE];
 /*
 Initialize memory space.
 */
-void global_init(void) {
+void global_init(void)
+{
 
     packet_init();
     channel_init();
@@ -41,7 +42,8 @@ void global_init(void) {
 /*
 Remove sentitive data from allocated memory.
 */
-void global_purge(void) {
+void global_purge(void)
+{
 
     unsigned char stack[4096];
 
@@ -63,7 +65,8 @@ void global_purge(void) {
 Remove sentitive data from allocated memory
 and exit with status 'x'.
 */
-void global_die(int x) {
+void global_die(int x)
+{
     global_purge();
     _exit(x);
 }

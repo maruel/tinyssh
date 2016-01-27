@@ -4,43 +4,45 @@ Jan Mojzis
 Public domain.
 */
 
-#include <unistd.h>
 #include "sshcrypto.h"
+#include <unistd.h>
 
 /* grep "define sshcrypto_" source/tinyssh/sshcrypto.h | cut -d ' ' -f2  |  while read x; do echo \#ifndef $x; echo error! ;echo \#endif; done */
 
 #ifndef sshcrypto_dh_PUBLICKEYMAX
-error!
+error !
 #endif
 #ifndef sshcrypto_dh_SECRETKEYMAX
-error!
+    error !
 #endif
 #ifndef sshcrypto_dh_MAX
-error!
+    error !
 #endif
 #ifndef sshcrypto_hash_MAX
-error!
+    error !
 #endif
 #ifndef sshcrypto_sign_PUBLICKEYMAX
-error!
+    error !
 #endif
 #ifndef sshcrypto_sign_SECRETKEYMAX
-error!
+    error !
 #endif
 #ifndef sshcrypto_sign_MAX
-error!
+    error !
 #endif
 #ifndef sshcrypto_sign_BASE64PUBLICKEYMAX
-error!
+    error !
 #endif
 #ifndef sshcrypto_sign_BASE64PUBLICKEYMIN
-error!
+    error !
 #endif
 #ifndef sshcrypto_cipher_KEYMAX
-error!
+    error !
 #endif
 
-int main(void) {
+    int
+    main(void)
+{
 
     /* check sshcrypto_init() called called more than once */
     sshcrypto_init();

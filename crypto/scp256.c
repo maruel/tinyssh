@@ -4,17 +4,16 @@ Jan Mojzis
 Public domain.
 */
 
+#include "scp256.h"
+#include "cleanup.h"
+#include "fe.h"
 #include "uint32_pack_big.h"
 #include "uint32_unpack_big.h"
-#include "fe.h"
-#include "cleanup.h"
-#include "scp256.h"
-
 
 /* m = 0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551L */
 static const fe m = {
-     0xfc632551, 0xf3b9cac2, 0xa7179e84, 0xbce6faad,
-     0xffffffff, 0xffffffff, 0x00000000, 0xffffffff
+    0xfc632551, 0xf3b9cac2, 0xa7179e84, 0xbce6faad,
+    0xffffffff, 0xffffffff, 0x00000000, 0xffffffff
 };
 
 /* m2 = bce6faada7179e84f3b9cac2fc63254f */
@@ -24,7 +23,6 @@ static const unsigned char m2[32] = {
     0x0f, 0x03, 0x0b, 0x09, 0x0c, 0x0a, 0x0c, 0x02,
     0x0f, 0x0c, 0x06, 0x03, 0x02, 0x05, 0x04, 0x0f
 };
-
 
 /*
 ml[0] = (2^256 * 2^0)  % m;
@@ -46,42 +44,65 @@ static const fe ml[8] = {
 /* 
 r = x % m; 
 */
-static void _reducebig(fe r, fel x) {
+static void _reducebig(fe r, fel x)
+{
 
     crypto_uint64 i, j, u, t[10];
 
     u = 0;
-    for (i = 0; i < 16; ++i) { u += x[i]; x[i] = u & 0xffffffff; u >>= 32; }
-
-    /* 16 limbs -> 10 limbs  */
-    for (i = 0; i < 8; ++i) t[i] = x[i];
-    t[8] = t[9] = 0;
-
-    for (j = 0; j < 8; ++j) for (i = 0; i < 8; ++i) {
-        u = (crypto_uint64)ml[j][i] * x[j + 8];
-        t[i    ] += u & 0xffffffff;
-        t[i + 1] += u >> 32;
+    for (i = 0; i < 16; ++i) {
+        u += x[i];
+        x[i] = u & 0xffffffff;
+        u >>= 32;
     }
 
+    /* 16 limbs -> 10 limbs  */
+    for (i = 0; i < 8; ++i)
+        t[i] = x[i];
+    t[8] = t[9] = 0;
+
+    for (j = 0; j < 8; ++j)
+        for (i = 0; i < 8; ++i) {
+            u = (crypto_uint64)ml[j][i] * x[j + 8];
+            t[i] += u & 0xffffffff;
+            t[i + 1] += u >> 32;
+        }
+
     u = 0;
-    for (i = 0; i < 10; ++i) { u += t[i]; t[i] = u & 0xffffffff; u >>= 32; }
+    for (i = 0; i < 10; ++i) {
+        u += t[i];
+        t[i] = u & 0xffffffff;
+        u >>= 32;
+    }
 
     /* 10 limbs -> 9 limbs  */
     for (j = 0; j < 2; ++j) {
         u = 0;
-        for (i = 0; i < 8; ++i) { u += t[i] + (crypto_uint32)ml[1][i] * t[9]; t[i] = u & 0xffffffff; u >>= 32; }
-        u += t[8]; t[8] = u & 0xffffffff; u >>= 32; t[9] = u;
+        for (i = 0; i < 8; ++i) {
+            u += t[i] + (crypto_uint32)ml[1][i] * t[9];
+            t[i] = u & 0xffffffff;
+            u >>= 32;
+        }
+        u += t[8];
+        t[8] = u & 0xffffffff;
+        u >>= 32;
+        t[9] = u;
     }
 
     /* 9 limbs -> 8 limbs  */
     for (j = 0; j < 2; ++j) {
         u = 0;
-        for (i = 0; i < 8; ++i) { u += t[i] + (crypto_uint32)ml[0][i] * t[8]; t[i] = u & 0xffffffff; u >>= 32; }
+        for (i = 0; i < 8; ++i) {
+            u += t[i] + (crypto_uint32)ml[0][i] * t[8];
+            t[i] = u & 0xffffffff;
+            u >>= 32;
+        }
         t[8] = u;
     }
 
     /* final reduce */
-    for (i = 0; i < 8; ++i) r[i] = t[i];
+    for (i = 0; i < 8; ++i)
+        r[i] = t[i];
     fe_reducesmall(r, m, u);
 
     cleanup(t);
@@ -90,7 +111,8 @@ static void _reducebig(fe r, fel x) {
 /*
 o = (a * b) % m
 */
-static void _mul(fe o, const fe a, const fe b) {
+static void _mul(fe o, const fe a, const fe b)
+{
 
     fel t;
 
@@ -103,7 +125,8 @@ static void _mul(fe o, const fe a, const fe b) {
 /*
 o = (a ^ 2) % m
 */
-static void _sq(fe o, const fe a) {
+static void _sq(fe o, const fe a)
+{
 
     fel t;
 
@@ -113,53 +136,63 @@ static void _sq(fe o, const fe a) {
     cleanup(t);
 }
 
-
 /* 
 out = (a + b) % m; 
 */
-static void _add(fe out, fe a, const fe b) {
+static void _add(fe out, fe a, const fe b)
+{
 
     fel t;
     long long i;
 
-    for (i = 0; i < 16; ++i) t[i] = 0;
-    for (i = 0; i < 8; ++i) t[i] = (crypto_uint64)a[i] + (crypto_uint64)b[i];
+    for (i = 0; i < 16; ++i)
+        t[i] = 0;
+    for (i = 0; i < 8; ++i)
+        t[i] = (crypto_uint64)a[i] + (crypto_uint64)b[i];
 
     _reducebig(out, t);
     cleanup(t);
 }
-
 
 /* 
 out = (1 / in) % m;
 ... using Fermat's Little Theorem
 44 mul, 262 sq
 */
-static void _inv(fe out, const fe in) {
+static void _inv(fe out, const fe in)
+{
 
     fe o, x2, x4, x8, x16, x32, t[16];
     long long i;
 
     _sq(o, in);
-    for (i = 0; i < 1 - 1; ++i) _sq(o, o);
+    for (i = 0; i < 1 - 1; ++i)
+        _sq(o, o);
     _mul(x2, o, in);
     _sq(o, x2);
-    for (i = 0; i < 2 - 1; ++i) _sq(o, o);
+    for (i = 0; i < 2 - 1; ++i)
+        _sq(o, o);
     _mul(x4, o, x2);
     _sq(o, x4);
-    for (i = 0; i < 4 - 1; ++i) _sq(o, o);
+    for (i = 0; i < 4 - 1; ++i)
+        _sq(o, o);
     _mul(x8, o, x4);
     _sq(o, x8);
-    for (i = 0; i < 8 - 1; ++i) _sq(o, o);
+    for (i = 0; i < 8 - 1; ++i)
+        _sq(o, o);
     _mul(x16, o, x8);
     _sq(o, x16);
-    for (i = 0; i < 16 - 1; ++i) _sq(o, o);
+    for (i = 0; i < 16 - 1; ++i)
+        _sq(o, o);
     _mul(x32, o, x16);
     _sq(o, x32);
-    for (i = 0; i < 32 - 1; ++i) _sq(o, o);
-    for (i = 0; i < 32; ++i) _sq(o, o);
+    for (i = 0; i < 32 - 1; ++i)
+        _sq(o, o);
+    for (i = 0; i < 32; ++i)
+        _sq(o, o);
     _mul(o, o, x32);
-    for (i = 0; i < 32; ++i) _sq(o, o);
+    for (i = 0; i < 32; ++i)
+        _sq(o, o);
     _mul(o, o, x32);
 
     fe_0(t[0]);
@@ -167,62 +200,80 @@ static void _inv(fe out, const fe in) {
     _sq(t[2], t[1]);
     fe_copy(t[3], x2);
     for (i = 4; i < 15; ++i) {
-        if ((i & 1) == 0) _sq(t[i], t[i / 2]);
-        else _mul(t[i], t[i - 1], in);
+        if ((i & 1) == 0)
+            _sq(t[i], t[i / 2]);
+        else
+            _mul(t[i], t[i - 1], in);
     }
     fe_copy(t[15], x4);
 
     for (i = 0; i < 32; ++i) {
-        _sq(o, o); _sq(o, o); _sq(o, o); _sq(o, o);
+        _sq(o, o);
+        _sq(o, o);
+        _sq(o, o);
+        _sq(o, o);
         _mul(o, o, t[m2[i]]);
     }
     fe_copy(out, o);
 
-    cleanup(o); cleanup(t);
-    cleanup(x2); cleanup(x4);
-    cleanup(x8); cleanup(x16); cleanup(x32);
+    cleanup(o);
+    cleanup(t);
+    cleanup(x2);
+    cleanup(x4);
+    cleanup(x8);
+    cleanup(x16);
+    cleanup(x32);
 }
 
-static void _tobytes(unsigned char *out, fe in) {
+static void _tobytes(unsigned char* out, fe in)
+{
 
     long long i;
 
     fe_reducesmall(in, m, 0);
-    for (i = 0; i < 8; ++i) uint32_pack_big(out + 28 - 4 * i, in[i]);
+    for (i = 0; i < 8; ++i)
+        uint32_pack_big(out + 28 - 4 * i, in[i]);
 }
 
-static void _frombytes(fe out, const unsigned char *in) {
+static void _frombytes(fe out, const unsigned char* in)
+{
 
     long long i;
 
-    for (i = 0; i < 8; ++i) out[i] = uint32_unpack_big(in + 28 - 4 * i);
+    for (i = 0; i < 8; ++i)
+        out[i] = uint32_unpack_big(in + 28 - 4 * i);
     fe_reducesmall(out, m, 0);
 }
 
-static void _from64bytes(fe out, const unsigned char *in) {
+static void _from64bytes(fe out, const unsigned char* in)
+{
 
     long long i;
     fel t;
 
-    for (i = 0; i < 16; ++i) t[i] = uint32_unpack_big(in + 60 - 4 * i);
+    for (i = 0; i < 16; ++i)
+        t[i] = uint32_unpack_big(in + 60 - 4 * i);
     _reducebig(out, t);
 
     cleanup(t);
 }
 
-void scp256_reduce64(unsigned char *x) {
+void scp256_reduce64(unsigned char* x)
+{
 
     fe a;
     long long i;
 
     _from64bytes(a, x);
-    for (i = 0; i < 64; ++i) x[i] = 0;
+    for (i = 0; i < 64; ++i)
+        x[i] = 0;
     _tobytes(x, a);
 
     cleanup(a);
 }
 
-void scp256_reduce32(unsigned char *x) {
+void scp256_reduce32(unsigned char* x)
+{
 
     fe a;
 
@@ -233,7 +284,8 @@ void scp256_reduce32(unsigned char *x) {
     cleanup(a);
 }
 
-void scp256_inv(unsigned char *x) {
+void scp256_inv(unsigned char* x)
+{
 
     fe a;
 
@@ -244,8 +296,8 @@ void scp256_inv(unsigned char *x) {
     cleanup(a);
 }
 
-
-void scp256_mul(unsigned char *o, const unsigned char *x, const unsigned char *y) {
+void scp256_mul(unsigned char* o, const unsigned char* x, const unsigned char* y)
+{
 
     fe a, b;
 
@@ -254,10 +306,12 @@ void scp256_mul(unsigned char *o, const unsigned char *x, const unsigned char *y
     _mul(a, a, b);
     _tobytes(o, a);
 
-    cleanup(a); cleanup(b);
+    cleanup(a);
+    cleanup(b);
 }
 
-void scp256_add(unsigned char *o, const unsigned char *x, const unsigned char *y) {
+void scp256_add(unsigned char* o, const unsigned char* x, const unsigned char* y)
+{
 
     fe a, b;
 
@@ -266,5 +320,6 @@ void scp256_add(unsigned char *o, const unsigned char *x, const unsigned char *y
     _add(a, a, b);
     _tobytes(o, a);
 
-    cleanup(a); cleanup(b);
+    cleanup(a);
+    cleanup(b);
 }

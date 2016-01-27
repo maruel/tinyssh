@@ -3,6 +3,6 @@
 
 #define PORTTOSTR_LEN 6
 
-extern char *porttostr(char *, const unsigned char *);
+extern char* porttostr(char*, const unsigned char*);
 
 #endif

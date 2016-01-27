@@ -3,8 +3,8 @@
 
 #define crypto_onetimeauth_poly1305_tinynacl_BYTES 16
 #define crypto_onetimeauth_poly1305_tinynacl_KEYBYTES 32
-extern int crypto_onetimeauth_poly1305_tinynacl(unsigned char *,const unsigned char *,unsigned long long,const unsigned char *);
-extern int crypto_onetimeauth_poly1305_tinynacl_verify(const unsigned char *,const unsigned char *,unsigned long long,const unsigned char *);
+extern int crypto_onetimeauth_poly1305_tinynacl(unsigned char*, const unsigned char*, unsigned long long, const unsigned char*);
+extern int crypto_onetimeauth_poly1305_tinynacl_verify(const unsigned char*, const unsigned char*, unsigned long long, const unsigned char*);
 
 #define crypto_onetimeauth_poly1305 crypto_onetimeauth_poly1305_tinynacl
 #define crypto_onetimeauth_poly1305_verify crypto_onetimeauth_poly1305_tinynacl_verify

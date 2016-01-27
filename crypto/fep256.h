@@ -14,8 +14,8 @@ extern void fep256_add(fe, const fe, const fe);
 extern void fep256_sub(fe, const fe, const fe);
 extern void fep256_neg(fe, const fe);
 
-extern void fep256_tobytes(unsigned char *, const fe);
-extern void fep256_frombytes(fe, const unsigned char *);
+extern void fep256_tobytes(unsigned char*, const fe);
+extern void fep256_frombytes(fe, const unsigned char*);
 
 extern int fep256_isnonzero(const fe);
 

@@ -4,45 +4,52 @@ Jan Mojzis
 Public domain.
 */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include "subprocess.h"
+#include "byte.h"
+#include "crypto_uint32.h"
 #include "fail.h"
-#include "savesync.h"
-#include "sshcrypto.h"
 #include "open.h"
 #include "purge.h"
-#include "byte.h"
 #include "randommod.h"
-#include "crypto_uint32.h"
-#include "subprocess.h"
+#include "savesync.h"
+#include "sshcrypto.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 unsigned char sh[sshcrypto_hash_MAX];
 unsigned char sm[sshcrypto_sign_MAX + sshcrypto_hash_MAX];
 unsigned char m[sshcrypto_sign_MAX + sshcrypto_hash_MAX];
 unsigned long long mlen;
 unsigned char sk[sshcrypto_sign_SECRETKEYMAX];
-const char *keydir = "./keydir";
+const char* keydir = "./keydir";
 
-static void create(const char *fn, const unsigned char *x, long long xlen) {
-    if (savesync(fn, x, xlen) == -1) fail("unable to create test directory");
+static void create(const char* fn, const unsigned char* x, long long xlen)
+{
+    if (savesync(fn, x, xlen) == -1)
+        fail("unable to create test directory");
 }
 
-int main(void) {
+int main(void)
+{
 
     long long i, j;
     int fd;
 
     fd = open_cwd();
-    if (fd == -1) fail("open_cwd() failure");
+    if (fd == -1)
+        fail("open_cwd() failure");
 
     /* make keydir */
     umask(022);
-    if (mkdir(keydir, 0755) == -1) fail("unable to create test directory");
-    if (chdir(keydir) == -1) fail("unable to chdir to directory");
+    if (mkdir(keydir, 0755) == -1)
+        fail("unable to create test directory");
+    if (chdir(keydir) == -1)
+        fail("unable to chdir to directory");
     for (i = 0; sshcrypto_keys[i].name; ++i) {
 
-        if (sshcrypto_keys[i].sign_keypair(sshcrypto_keys[i].sign_publickey, sk) != 0) fail("unable to generate key pair");
+        if (sshcrypto_keys[i].sign_keypair(sshcrypto_keys[i].sign_publickey, sk) != 0)
+            fail("unable to generate key pair");
         umask(022);
         create(sshcrypto_keys[i].sign_publickeyfilename, sshcrypto_keys[i].sign_publickey, sshcrypto_keys[i].sign_publickeybytes);
         umask(077);
@@ -50,7 +57,8 @@ int main(void) {
         purge(sk, sizeof sk);
     }
 
-    if (fchdir(fd) == -1) fail("fchdir() failure");
+    if (fchdir(fd) == -1)
+        fail("fchdir() failure");
 
     for (i = 0; sshcrypto_keys[i].name; ++i) {
 
@@ -72,7 +80,7 @@ int main(void) {
             byte_copy(sm + sshcrypto_sign_bytes, sshcrypto_hash_bytes, sh);
 
             /* verify */
-            if (sshcrypto_keys[i].sign_open(m, &mlen, sm, sshcrypto_hash_bytes + sshcrypto_sign_bytes, sshcrypto_keys[i].sign_publickey) != 0) 
+            if (sshcrypto_keys[i].sign_open(m, &mlen, sm, sshcrypto_hash_bytes + sshcrypto_sign_bytes, sshcrypto_keys[i].sign_publickey) != 0)
                 fail("unable to open signed box");
 
 #if 0

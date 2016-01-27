@@ -2,6 +2,6 @@
 
 main()
 {
-  printf("unknown CPU ID\n");
-  return 0;
+    printf("unknown CPU ID\n");
+    return 0;
 }

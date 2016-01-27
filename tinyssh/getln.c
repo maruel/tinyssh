@@ -4,12 +4,13 @@ Jan Mojzis
 Public domain.
 */
 
+#include "getln.h"
+#include "e.h"
 #include <poll.h>
 #include <unistd.h>
-#include "e.h"
-#include "getln.h"
 
-static int getch(int fd, char *x) {
+static int getch(int fd, char* x)
+{
 
     int r;
     struct pollfd p;
@@ -33,25 +34,42 @@ static int getch(int fd, char *x) {
 The function 'getln' reads line from filedescriptor 'fd' into
 buffer 'xv' of length 'xmax'. 
 */
-int getln(int fd, void *xv, long long xmax) {
+int getln(int fd, void* xv, long long xmax)
+{
 
     long long xlen;
     int r;
     char ch;
-    char *x = xv;
+    char* x = xv;
 
-    if (xmax < 1) { errno = EINVAL; return -1; }
+    if (xmax < 1) {
+        errno = EINVAL;
+        return -1;
+    }
     x[0] = 0;
-    if (fd < 0) { errno = EBADF; return -1; }
+    if (fd < 0) {
+        errno = EBADF;
+        return -1;
+    }
 
     xlen = 0;
     for (;;) {
-        if (xlen >= xmax - 1) { x[xmax - 1] = 0; errno = ENOMEM; return -1; }
+        if (xlen >= xmax - 1) {
+            x[xmax - 1] = 0;
+            errno = ENOMEM;
+            return -1;
+        }
         r = getch(fd, &ch);
-        if (r != 1) { close(fd); fd = -1; break; }
-        if (ch == 0) ch = '\n';
+        if (r != 1) {
+            close(fd);
+            fd = -1;
+            break;
+        }
+        if (ch == 0)
+            ch = '\n';
         x[xlen++] = ch;
-        if (ch == '\n') break;
+        if (ch == '\n')
+            break;
     }
     x[xlen] = 0;
     return r;

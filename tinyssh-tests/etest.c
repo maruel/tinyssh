@@ -4,14 +4,16 @@ Jan Mojzis
 Public domain.
 */
 
-#include <unistd.h>
 #include "e.h"
+#include <unistd.h>
 
 #ifndef EPROTO
-error!
+error !
 #endif
 
-int main(void) {
+    int
+    main(void)
+{
 
     _exit(0);
 }

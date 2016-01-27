@@ -4,12 +4,12 @@ Jan Mojzis
 Public domain.
 */
 
-#include <string.h>
+#include "channel.h"
 #include "fail.h"
 #include "numtostr.h"
-#include "channel.h"
+#include <string.h>
 
-const char *vector[] = {
+const char* vector[] = {
     "0=0",
     "1=1",
     "2=2",
@@ -81,18 +81,22 @@ const char *vector[] = {
 error !
 #endif
 
-
-static void test1(void) {
+    static void
+    test1(void)
+{
 
     long long i;
 
     for (i = 0; i < 64; ++i) {
-        if (!channel_subsystem_add(vector[i])) fail("failure");
+        if (!channel_subsystem_add(vector[i]))
+            fail("failure");
     }
-    if (channel_subsystem_add(vector[i])) fail("failure");
+    if (channel_subsystem_add(vector[i]))
+        fail("failure");
 }
 
-static void test2(void) {
+static void test2(void)
+{
 
     long long i;
     char *x, *n;
@@ -100,24 +104,31 @@ static void test2(void) {
     for (i = 0; i < 62; ++i) {
         n = numtostr(0, i);
         x = channel_subsystem_get(n);
-        if (!x) fail("failure");
-        if (strcmp(x, n)) fail("failure");
+        if (!x)
+            fail("failure");
+        if (strcmp(x, n))
+            fail("failure");
     }
     n = numtostr(0, 62);
     x = channel_subsystem_get(n);
-    if (x) fail("failure");
+    if (x)
+        fail("failure");
 
     n = numtostr(0, 63);
     x = channel_subsystem_get(n);
-    if (!x) fail("failure");
-    if (!strcmp(x, n)) fail("failure");
+    if (!x)
+        fail("failure");
+    if (!strcmp(x, n))
+        fail("failure");
 
     n = numtostr(0, 64);
     x = channel_subsystem_get(n);
-    if (x) fail("failure");
+    if (x)
+        fail("failure");
 }
 
-int main(void) {
+int main(void)
+{
     test1();
     test2();
     _exit(0);

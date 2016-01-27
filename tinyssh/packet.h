@@ -8,10 +8,10 @@ Public domain.
 #define _PACKET_H____
 
 #include "buf.h"
+#include "channel.h"
 #include "crypto_uint32.h"
 #include "crypto_uint8.h"
 #include "sshcrypto.h"
-#include "channel.h"
 
 #define PACKET_NAMESIZE 64
 
@@ -68,7 +68,6 @@ struct packet {
     struct buf recvbuf;
     struct buf sendbuf;
     crypto_uint32 packet_length;
-
 };
 
 /* packet.c */
@@ -86,11 +85,11 @@ extern int packet_recvisready(void);
 extern int packet_recv(void);
 
 /* packet_get.c */
-extern int packet_get(struct buf *, crypto_uint8);
-extern int packet_getall(struct buf *, crypto_uint8);
+extern int packet_get(struct buf*, crypto_uint8);
+extern int packet_getall(struct buf*, crypto_uint8);
 
 /* packet_put.c */
-extern void packet_put(struct buf *);
+extern void packet_put(struct buf*);
 extern int packet_putisready(void);
 
 /* packet_hello.c */
@@ -102,32 +101,32 @@ extern int packet_kex_send(void);
 extern int packet_kex_receive(void);
 
 /* packet_kexdh.c */
-extern int packet_kexdh(const char *, struct buf *, struct buf *);
+extern int packet_kexdh(const char*, struct buf*, struct buf*);
 
 /* packet_auth.c */
-extern int packet_auth(struct buf *, struct buf *);
+extern int packet_auth(struct buf*, struct buf*);
 
 /* packet_channel_open.c */
-extern int packet_channel_open(struct buf *, struct buf *);
+extern int packet_channel_open(struct buf*, struct buf*);
 
 /* packet_channel_request.c */
-extern int packet_channel_request(struct buf *, struct buf *);
+extern int packet_channel_request(struct buf*, struct buf*);
 
 /* packet_channel_recv.c */
-extern int packet_channel_recv_data(struct buf *);
-extern int packet_channel_recv_extendeddata(struct buf *);
-extern int packet_channel_recv_windowadjust(struct buf *);
-extern int packet_channel_recv_eof(struct buf *);
-extern int packet_channel_recv_close(struct buf *);
+extern int packet_channel_recv_data(struct buf*);
+extern int packet_channel_recv_extendeddata(struct buf*);
+extern int packet_channel_recv_windowadjust(struct buf*);
+extern int packet_channel_recv_eof(struct buf*);
+extern int packet_channel_recv_close(struct buf*);
 
 /* packet_channel_send.c */
-extern void packet_channel_send_data(struct buf *);
-extern void packet_channel_send_extendeddata(struct buf *);
-extern int packet_channel_send_windowadjust(struct buf *);
-extern void packet_channel_send_eof(struct buf *);
-extern int packet_channel_send_close(struct buf *, int, int);
+extern void packet_channel_send_data(struct buf*);
+extern void packet_channel_send_extendeddata(struct buf*);
+extern int packet_channel_send_windowadjust(struct buf*);
+extern void packet_channel_send_eof(struct buf*);
+extern int packet_channel_send_close(struct buf*, int, int);
 
 /* packet_unimplemented.c */
-extern int packet_unimplemented(struct buf *);
+extern int packet_unimplemented(struct buf*);
 
 #endif

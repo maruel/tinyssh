@@ -4,97 +4,97 @@ Jan Mojzis
 Public domain.
 */
 
-#include <signal.h>
-#include <unistd.h>
-#include <string.h>
-#include "fail.h"
 #include "ssh.h"
+#include "fail.h"
+#include <signal.h>
+#include <string.h>
+#include <unistd.h>
 
 /*
 grep SSH_ * | sed 's/.*SSH_/SSH_/g' | cut -d ',' -f1 | cut -d ' ' -f1 | cut -d ')' -f1 | cut -d ':' -f1 | cut -d '"' -f1 | cut -d ';' -f1 | sort -u | grep -v 'SSH_TTY\|SSH_CONNECTION'| while read x; do echo \#ifndef $x; echo error! ;echo \#endif; done
 */
 
 #ifndef SSH_MSG_CHANNEL_CLOSE
-error!
+error !
 #endif
 #ifndef SSH_MSG_CHANNEL_DATA
-error!
+    error !
 #endif
 #ifndef SSH_MSG_CHANNEL_EOF
-error!
+    error !
 #endif
 #ifndef SSH_MSG_CHANNEL_EXTENDED_DATA
-error!
+    error !
 #endif
 #ifndef SSH_MSG_CHANNEL_OPEN
-error!
+    error !
 #endif
 #ifndef SSH_MSG_CHANNEL_OPEN_CONFIRMATION
-error!
+    error !
 #endif
 #ifndef SSH_MSG_CHANNEL_OPEN_FAILURE
-error!
+    error !
 #endif
 #ifndef SSH_MSG_CHANNEL_REQUEST
-error!
+    error !
 #endif
 #ifndef SSH_MSG_CHANNEL_SUCCESS
-error!
+    error !
 #endif
 #ifndef SSH_MSG_CHANNEL_WINDOW_ADJUST
-error!
+    error !
 #endif
 #ifndef SSH_MSG_DEBUG
-error!
+    error !
 #endif
 #ifndef SSH_MSG_DISCONNECT
-error!
+    error !
 #endif
 #ifndef SSH_MSG_IGNORE
-error!
+    error !
 #endif
 #ifndef SSH_MSG_KEXDH_INIT
-error!
+    error !
 #endif
 #ifndef SSH_MSG_KEXDH_REPLY
-error!
+    error !
 #endif
 #ifndef SSH_MSG_KEXINIT
-error!
+    error !
 #endif
 #ifndef SSH_MSG_NEWKEYS
-error!
+    error !
 #endif
 #ifndef SSH_MSG_SERVICE_ACCEPT
-error!
+    error !
 #endif
 #ifndef SSH_MSG_SERVICE_REQUEST
-error!
+    error !
 #endif
 #ifndef SSH_MSG_UNIMPLEMENTED
-error!
+    error !
 #endif
 #ifndef SSH_MSG_USERAUTH_FAILURE
-error!
+    error !
 #endif
 #ifndef SSH_MSG_USERAUTH_PK_OK
-error!
+    error !
 #endif
 #ifndef SSH_MSG_USERAUTH_REQUEST
-error!
+    error !
 #endif
 #ifndef SSH_MSG_USERAUTH_SUCCESS
-error!
+    error !
 #endif
 #ifndef SSH_OPEN_ADMINISTRATIVELY_PROHIBITED
-error!
+    error !
 #endif
 
-int main(void) {
+    int
+    main(void)
+{
 
-    if (strcmp(ssh_sigstr(SIGTERM), "TERM")) fail("failure")
-    if (strcmp(ssh_sigstrlong(SIGTERM), "SIGTERM (termination)")) fail("failure")
-    if (strcmp(ssh_sigstr(-1), "UNKNOWN")) fail("failure")
-    if (strcmp(ssh_sigstrlong(-1), "UNKNOWN SIGNAL")) fail("failure")
-    _exit(0);
+    if (strcmp(ssh_sigstr(SIGTERM), "TERM"))
+        fail("failure") if (strcmp(ssh_sigstrlong(SIGTERM), "SIGTERM (termination)")) fail("failure") if (strcmp(ssh_sigstr(-1), "UNKNOWN")) fail("failure") if (strcmp(ssh_sigstrlong(-1), "UNKNOWN SIGNAL")) fail("failure")
+            _exit(0);
 }

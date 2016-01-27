@@ -4,9 +4,9 @@
 #define crypto_sign_ed25519_tinynacl_SECRETKEYBYTES 64
 #define crypto_sign_ed25519_tinynacl_PUBLICKEYBYTES 32
 #define crypto_sign_ed25519_tinynacl_BYTES 64
-extern int crypto_sign_ed25519_tinynacl(unsigned char *,unsigned long long *,const unsigned char *,unsigned long long,const unsigned char *);
-extern int crypto_sign_ed25519_tinynacl_open(unsigned char *,unsigned long long *,const unsigned char *,unsigned long long,const unsigned char *);
-extern int crypto_sign_ed25519_tinynacl_keypair(unsigned char *,unsigned char *);
+extern int crypto_sign_ed25519_tinynacl(unsigned char*, unsigned long long*, const unsigned char*, unsigned long long, const unsigned char*);
+extern int crypto_sign_ed25519_tinynacl_open(unsigned char*, unsigned long long*, const unsigned char*, unsigned long long, const unsigned char*);
+extern int crypto_sign_ed25519_tinynacl_keypair(unsigned char*, unsigned char*);
 
 #define crypto_sign_ed25519 crypto_sign_ed25519_tinynacl
 #define crypto_sign_ed25519_open crypto_sign_ed25519_tinynacl_open

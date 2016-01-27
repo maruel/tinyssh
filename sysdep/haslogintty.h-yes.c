@@ -3,11 +3,13 @@
 
 extern int login_tty(int);
 
-void fce(void) {
+void fce(void)
+{
     login_tty(0);
 }
 
-int main(void) {
+int main(void)
+{
 
     printf("#define HASLOGINTTY 1\n");
     return 0;

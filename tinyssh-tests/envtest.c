@@ -4,50 +4,57 @@ Jan Mojzis
 Public domain.
 */
 
+#include "env.h"
+#include "fail.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include "fail.h"
-#include "env.h"
+#include <unistd.h>
 
-static void test_zero(void) {
+static void test_zero(void)
+{
 
-    if (env_get(0)) fail("env_get accepts zero input");
+    if (env_get(0))
+        fail("env_get accepts zero input");
 }
 
-static void doit(const char *d0, const char *d) {
+static void doit(const char* d0, const char* d)
+{
 
-    char *s;
+    char* s;
 
     s = env_get(d0);
 
     if (!s) {
-        if (d) fail("env_get failure");
+        if (d)
+            fail("env_get failure");
         return;
     }
 
-    if (!s) fail("env_get failure");
-    if (strcmp(s, d)) fail("env_get failure");
+    if (!s)
+        fail("env_get failure");
+    if (strcmp(s, d))
+        fail("env_get failure");
     return;
 }
 
-static void test_setunset(void) {
+static void test_setunset(void)
+{
 
-    setenv("x","x",1);
+    setenv("x", "x", 1);
     doit("x", "x");
 
-    setenv("x","y",1);
+    setenv("x", "y", 1);
     doit("x", "y");
 
     unsetenv("x");
     doit("x", 0);
 }
 
+static void test_env(void)
+{
 
-static void test_env(void) {
-
-    const char *env[10];
+    const char* env[10];
 
     env[0] = "a=1";
     env[1] = "a=2";
@@ -58,7 +65,7 @@ static void test_env(void) {
     env[6] = "e==";
     env[7] = 0;
 
-    environ = (char **)env;
+    environ = (char**)env;
 
     doit("a", "1");
     doit("b", "b=1");
@@ -69,7 +76,8 @@ static void test_env(void) {
     doit("", "null");
 }
 
-int main(void) {
+int main(void)
+{
 
     test_zero();
     test_setunset();

@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <utmpx.h>
 
-int main(void) {
+int main(void)
+{
 
-    struct utmpx ut = {0};
+    struct utmpx ut = { 0 };
 
     ut.ut_syslen = 0;
 

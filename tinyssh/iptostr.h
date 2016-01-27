@@ -3,6 +3,6 @@
 
 #define IPTOSTR_LEN 46
 
-extern char *iptostr(char *, const unsigned char *);
+extern char* iptostr(char*, const unsigned char*);
 
 #endif

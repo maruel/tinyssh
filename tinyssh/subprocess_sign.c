@@ -4,23 +4,23 @@ Jan Mojzis
 Public domain.
 */
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#include "subprocess.h"
+#include "blocking.h"
+#include "bug.h"
+#include "byte.h"
+#include "e.h"
+#include "global.h"
 #include "load.h"
 #include "log.h"
 #include "open.h"
-#include "writeall.h"
 #include "purge.h"
-#include "global.h"
-#include "bug.h"
-#include "e.h"
 #include "purge.h"
-#include "byte.h"
 #include "readall.h"
-#include "blocking.h"
 #include "sshcrypto.h"
-#include "subprocess.h"
+#include "writeall.h"
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 /*
 The 'subprocess_sign' function reads secret-key from 'keydir' and
@@ -29,18 +29,27 @@ Caller is expecting 'y' of length 'ylen'. Signing is done
 in a different process, so secret-key is in a separate
 memory space than rest of the program.
 */
-int subprocess_sign(unsigned char *y, long long ylen, const char *keydir, unsigned char *x, long long xlen) {
+int subprocess_sign(unsigned char* y, long long ylen, const char* keydir, unsigned char* x, long long xlen)
+{
 
     pid_t pid;
-    int status, fromchild[2] = {-1, -1};
+    int status, fromchild[2] = { -1, -1 };
 
-    if (ylen != sshcrypto_sign_bytes) bug_inval();
-    if (xlen != sshcrypto_hash_bytes) bug_inval();
-    if (!y || !keydir || !x) bug_inval();
+    if (ylen != sshcrypto_sign_bytes)
+        bug_inval();
+    if (xlen != sshcrypto_hash_bytes)
+        bug_inval();
+    if (!y || !keydir || !x)
+        bug_inval();
 
-    if (open_pipe(fromchild) == -1) return -1;
+    if (open_pipe(fromchild) == -1)
+        return -1;
     pid = fork();
-    if (pid == -1) { close(fromchild[0]); close(fromchild[1]); return -1; }
+    if (pid == -1) {
+        close(fromchild[0]);
+        close(fromchild[1]);
+        return -1;
+    }
     if (pid == 0) {
         unsigned char sk[sshcrypto_sign_SECRETKEYMAX];
         unsigned char sm[sshcrypto_sign_MAX + sshcrypto_hash_MAX];
@@ -58,7 +67,7 @@ int subprocess_sign(unsigned char *y, long long ylen, const char *keydir, unsign
             purge(sk, sizeof sk);
             global_die(111);
         }
-        if (sshcrypto_sign(sm, &smlen, x, sshcrypto_hash_bytes, sk) != 0) { 
+        if (sshcrypto_sign(sm, &smlen, x, sshcrypto_hash_bytes, sk) != 0) {
             log_w4("sign: unable to sign using secret-key from file ", keydir, "/", sshcrypto_sign_secretkeyfilename);
             purge(sk, sizeof sk);
             global_die(111);
@@ -76,10 +85,15 @@ int subprocess_sign(unsigned char *y, long long ylen, const char *keydir, unsign
     }
     close(fromchild[1]);
     blocking_enable(fromchild[0]);
-    if (readall(fromchild[0], y, ylen) == -1) { close(fromchild[0]); return -1; }
+    if (readall(fromchild[0], y, ylen) == -1) {
+        close(fromchild[0]);
+        return -1;
+    }
     close(fromchild[0]);
 
-    while (waitpid(pid, &status, 0) != pid) {};
-    if (!WIFEXITED(status)) return -1;
+    while (waitpid(pid, &status, 0) != pid) {
+    };
+    if (!WIFEXITED(status))
+        return -1;
     return WEXITSTATUS(status);
 }

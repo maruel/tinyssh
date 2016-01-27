@@ -4,18 +4,20 @@ Jan Mojzis
 Public domain.
 */
 
+#include "packet.h"
 #include "purge.h"
 #include "trymlock.h"
-#include "packet.h"
 
-struct packet packet = {0};
+struct packet packet = { 0 };
 
-void packet_purge(void) {
+void packet_purge(void)
+{
     purge(&packet, sizeof packet);
     trymunlock(&packet, sizeof packet);
 }
 
-void packet_init(void) {
+void packet_init(void)
+{
 
     trymlock(&packet, sizeof packet);
     purge(&packet, sizeof packet);
@@ -38,4 +40,3 @@ void packet_init(void) {
     buf_init(&packet.sendbuf, packet.sendbufspace, sizeof packet.sendbufspace);
     buf_init(&packet.recvbuf, packet.recvbufspace, sizeof packet.recvbufspace);
 }
-

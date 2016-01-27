@@ -4,14 +4,16 @@ Jan Mojzis
 Public domain.
 */
 
-#include <unistd.h>
 #include "global.h"
+#include <unistd.h>
 
 #ifndef GLOBAL_BSIZE
-error!
+error !
 #endif
 
-int main(void) {
+    int
+    main(void)
+{
     global_init();
     global_init();
     global_purge();

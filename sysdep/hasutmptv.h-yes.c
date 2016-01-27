@@ -1,10 +1,11 @@
 /* Public domain. */
 #include <stdio.h>
-#include <time.h>
 #include <sys/time.h>
+#include <time.h>
 #include <utmp.h>
 
-int main(void) {
+int main(void)
+{
 
     struct utmp ut;
 
@@ -14,4 +15,3 @@ int main(void) {
     printf("#define HASUTMPTV 1\n");
     return 0;
 }
-

@@ -1,15 +1,17 @@
-#include "str.h"
 #include "env.h"
+#include "str.h"
 
 /*
 The 'env_get(name)' function returns the value of the first environment
 variable whose name is 'name', or 0 if there is no such variable.
 */
-char *env_get(const char *name) {
+char* env_get(const char* name)
+{
 
     long long len, i;
 
-    if (!name) return 0;
+    if (!name)
+        return 0;
     len = str_len(name);
     for (i = 0; environ[i]; ++i)
         if (str_start(environ[i], name) && (environ[i][len] == '='))

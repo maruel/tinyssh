@@ -4,8 +4,8 @@ Jan Mojzis
 Public domain.
 */
 
-#include "misc.h"
 #include "crypto_scalarmult_curve25519.h"
+#include "misc.h"
 
 #define BYTES crypto_scalarmult_curve25519_BYTES
 #define SCALARBYTES crypto_scalarmult_curve25519_SCALARBYTES
@@ -28,13 +28,17 @@ static unsigned char d[SCALARBYTES] = {
     0xf7, 0x13, 0xf1, 0x05, 0x67, 0x69, 0xd5, 0xbf
 };
 
-static void test_vector(void) {
+static void test_vector(void)
+{
 
     long long j;
     unsigned char r[BYTES];
 
-    if (crypto_scalarmult_curve25519(r, d, S) != 0) fail("crypto_scalarmult_curve25519() failure");
-    for (j = 0; j < BYTES; ++j) if (r[j] != R[j]) fail("crypto_scalarmult_curve25519() failure");
+    if (crypto_scalarmult_curve25519(r, d, S) != 0)
+        fail("crypto_scalarmult_curve25519() failure");
+    for (j = 0; j < BYTES; ++j)
+        if (r[j] != R[j])
+            fail("crypto_scalarmult_curve25519() failure");
 }
 
 static unsigned char skdata[1080][32] = {
@@ -45,7 +49,8 @@ static unsigned char pkdata[1080][32] = {
 #include "precomp_curve25519.data"
 };
 
-static void test_base(void) {
+static void test_base(void)
+{
 
     long long i, j;
 
@@ -55,30 +60,33 @@ static void test_base(void) {
             fail_printdata("sk", skdata[i], SCALARBYTES);
             fail("crypto_scalarmult_curve25519_base() failure, please report it !!!!!!!!!");
         }
-        for (j = 0; j < BYTES; ++j) if (pk[j] != pkdata[i][j]) {
-            fail_printdata("pk_computed", pk, BYTES);
-            fail_printdata("pk_expected", pkdata[i], BYTES);
-            fail_printdata("sk", skdata[i], SCALARBYTES);
-            fail("crypto_scalarmult_curve25519() failure, please report it !!!!!!!!!");
-        }
+        for (j = 0; j < BYTES; ++j)
+            if (pk[j] != pkdata[i][j]) {
+                fail_printdata("pk_computed", pk, BYTES);
+                fail_printdata("pk_expected", pkdata[i], BYTES);
+                fail_printdata("sk", skdata[i], SCALARBYTES);
+                fail("crypto_scalarmult_curve25519() failure, please report it !!!!!!!!!");
+            }
     }
 }
 
 static const unsigned char basepoint[BYTES] = { 9 };
 
 static unsigned char test_scalarmult_checksum[32] = {
-    0xca, 0xf4, 0xa3, 0xbe, 0x00, 0x9c, 0x6f, 0x01, 
-    0xb8, 0x4e, 0xf8, 0x0d, 0x0a, 0x17, 0x16, 0x42, 
-    0xfe, 0x01, 0x59, 0x40, 0x74, 0xd4, 0xa6, 0x48, 
+    0xca, 0xf4, 0xa3, 0xbe, 0x00, 0x9c, 0x6f, 0x01,
+    0xb8, 0x4e, 0xf8, 0x0d, 0x0a, 0x17, 0x16, 0x42,
+    0xfe, 0x01, 0x59, 0x40, 0x74, 0xd4, 0xa6, 0x48,
     0x07, 0x94, 0x95, 0x94, 0xab, 0xa4, 0x5e, 0x6d
 };
 
-static void test_scalarmult(void) {
+static void test_scalarmult(void)
+{
 
     long long i, j;
     unsigned char outpk[BYTES];
 
-    for (i = 0; i < BYTES; ++i) pk[i] = basepoint[i];
+    for (i = 0; i < BYTES; ++i)
+        pk[i] = basepoint[i];
 
     checksum_zero();
     for (i = 0; i < 1080; ++i) {
@@ -89,12 +97,14 @@ static void test_scalarmult(void) {
             fail("crypto_scalarmult_curve25519() failure, please report it !!!!!!!!!");
         }
         checksum(outpk, BYTES);
-        for (j = 0; j < BYTES; ++j) pk[j] = outpk[j];
+        for (j = 0; j < BYTES; ++j)
+            pk[j] = outpk[j];
     }
     fail_whenbadchecksum(test_scalarmult_checksum);
 }
 
-static void test_random(void) {
+static void test_random(void)
+{
 
     long long i, j;
     unsigned char sk1[SCALARBYTES + 16];
@@ -104,17 +114,22 @@ static void test_random(void) {
     unsigned char pk2[BYTES + 16];
     unsigned char k2[BYTES + 16];
 
-
     for (i = 0; i < 16; ++i) {
         unsaferandombytes(sk1 + i, SCALARBYTES);
         unsaferandombytes(sk2 + i, SCALARBYTES);
-        if (crypto_scalarmult_curve25519_base(pk1 + i, sk1 + i) != 0) goto fail;
+        if (crypto_scalarmult_curve25519_base(pk1 + i, sk1 + i) != 0)
+            goto fail;
         pk1[31 + i] |= 128;
-        if (crypto_scalarmult_curve25519_base(pk2 + i, sk2 + i) != 0) goto fail;
+        if (crypto_scalarmult_curve25519_base(pk2 + i, sk2 + i) != 0)
+            goto fail;
         pk2[31 + i] |= 128;
-        if (crypto_scalarmult_curve25519(k1 + i, sk1 + i, pk2 + i) != 0) goto fail;
-        if (crypto_scalarmult_curve25519(k2 + i, sk2 + i, pk1 + i) != 0) goto fail;
-        for (j = 0; j < BYTES; ++j) if (k1[j + i] != k2[j + i]) goto fail;
+        if (crypto_scalarmult_curve25519(k1 + i, sk1 + i, pk2 + i) != 0)
+            goto fail;
+        if (crypto_scalarmult_curve25519(k2 + i, sk2 + i, pk1 + i) != 0)
+            goto fail;
+        for (j = 0; j < BYTES; ++j)
+            if (k1[j + i] != k2[j + i])
+                goto fail;
     }
     return;
 
@@ -124,7 +139,8 @@ fail:
     fail("crypto_scalarmult_curve25519() failure, please report it !!!!!!!!!");
 }
 
-int main(void) {
+int main(void)
+{
 
     test_vector();
     test_base();

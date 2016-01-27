@@ -4,8 +4,8 @@ Jan Mojzis
 Public domain.
 */
 
-#include "misc.h"
 #include "crypto_auth_hmacsha256.h"
+#include "misc.h"
 
 static unsigned char k[32] = {
     0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
@@ -24,7 +24,6 @@ static unsigned char c[50] = {
     0xcd, 0xcd
 };
 
-
 static unsigned char ao[32] = {
     0x37, 0x2e, 0xfc, 0xf9, 0xb4, 0x0b, 0x35, 0xc2,
     0x11, 0x5b, 0x13, 0x46, 0x90, 0x3d, 0x2e, 0xf4,
@@ -32,15 +31,18 @@ static unsigned char ao[32] = {
     0x7b, 0xb1, 0x56, 0xd3, 0xd7, 0xb3, 0x0d, 0x3f
 };
 
-
-static void test_rfc(void) {
+static void test_rfc(void)
+{
 
     unsigned char a[32];
     long long i;
 
     crypto_auth_hmacsha256(a, c, sizeof c, k);
-    for (i = 0; i < 32; ++i) if (a[i] != ao[i]) fail("crypto_auth_hmacsha256() failure");
-    if (crypto_auth_hmacsha256_verify(ao, c, sizeof c, k) != 0) fail("crypto_auth_hmacsha256_verify() failure");
+    for (i = 0; i < 32; ++i)
+        if (a[i] != ao[i])
+            fail("crypto_auth_hmacsha256() failure");
+    if (crypto_auth_hmacsha256_verify(ao, c, sizeof c, k) != 0)
+        fail("crypto_auth_hmacsha256_verify() failure");
 }
 
 #define SPACESIZE 5232
@@ -49,16 +51,15 @@ static unsigned char space[SPACESIZE + 16];
 static unsigned char key[crypto_auth_hmacsha256_KEYBYTES + 16];
 static unsigned char buf[crypto_auth_hmacsha256_BYTES + 16];
 
-
 static unsigned char test_pseudorandom_checksum[32] = {
-    0xc7, 0xe5, 0x4a, 0xa2, 0x7e, 0x24, 0xe7, 0xbc, 
-    0x32, 0x70, 0xc8, 0x40, 0x31, 0xf2, 0xce, 0x61, 
-    0xc2, 0xcd, 0x0d, 0x89, 0xf4, 0x80, 0x47, 0x60, 
+    0xc7, 0xe5, 0x4a, 0xa2, 0x7e, 0x24, 0xe7, 0xbc,
+    0x32, 0x70, 0xc8, 0x40, 0x31, 0xf2, 0xce, 0x61,
+    0xc2, 0xcd, 0x0d, 0x89, 0xf4, 0x80, 0x47, 0x60,
     0xac, 0xb9, 0x2d, 0x70, 0x53, 0x73, 0x25, 0x72
 };
 
-
-static void test_pseudorandom(void) {
+static void test_pseudorandom(void)
+{
 
     long long i, j;
 
@@ -71,7 +72,7 @@ static void test_pseudorandom(void) {
 
         crypto_auth_hmacsha256(buf + i, space + i, j, key + i);
         checksum(buf + i, crypto_auth_hmacsha256_BYTES);
-    
+
         if (crypto_auth_hmacsha256_verify(buf + i, space + i, j, key + i) != 0) {
             fail_printdata("m", space + i, j);
             fail_printdata("key", key + i, crypto_auth_hmacsha256_KEYBYTES);
@@ -84,7 +85,8 @@ static void test_pseudorandom(void) {
     fail_whenbadchecksum(test_pseudorandom_checksum);
 }
 
-int main(void) {
+int main(void)
+{
 
     test_rfc();
     test_pseudorandom();

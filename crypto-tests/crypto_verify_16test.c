@@ -4,42 +4,51 @@ Jan Mojzis
 Public domain.
 */
 
-#include "misc.h"
 #include "crypto_verify_16.h"
+#include "misc.h"
 
 unsigned char b1[crypto_verify_16_BYTES + 16];
 unsigned char b2[crypto_verify_16_BYTES + 16];
 
-
-void test_alignment(void) {
+void test_alignment(void)
+{
 
     long long i;
 
-    for (i = 0; i < sizeof b1; ++i) b1[i] = 0xff;
-    for (i = 0; i < sizeof b2; ++i) b2[i] = 0xff;
+    for (i = 0; i < sizeof b1; ++i)
+        b1[i] = 0xff;
+    for (i = 0; i < sizeof b2; ++i)
+        b2[i] = 0xff;
 
     for (i = 0; i < 16; ++i) {
-        if (crypto_verify_16(b1 + i, b2 + i) != 0) fail("crypto_verify_16 failure");
+        if (crypto_verify_16(b1 + i, b2 + i) != 0)
+            fail("crypto_verify_16 failure");
     }
 }
 
-void test_verify(void) {
+void test_verify(void)
+{
 
     long long i;
 
-    for (i = 0; i < sizeof b1; ++i) b1[i] = 0xff;
-    for (i = 0; i < sizeof b2; ++i) b2[i] = 0xff;
+    for (i = 0; i < sizeof b1; ++i)
+        b1[i] = 0xff;
+    for (i = 0; i < sizeof b2; ++i)
+        b2[i] = 0xff;
 
-    if (crypto_verify_16(b1, b2) != 0) fail("crypto_verify_16 failure");
+    if (crypto_verify_16(b1, b2) != 0)
+        fail("crypto_verify_16 failure");
 
     for (i = 0; i < crypto_verify_16_BYTES; ++i) {
         b1[i] = 0;
-        if (crypto_verify_16(b1, b2) == 0) fail("crypto_verify_16 failure");
+        if (crypto_verify_16(b1, b2) == 0)
+            fail("crypto_verify_16 failure");
         b1[i] = 0xff;
     }
 }
 
-int main(void) {
+int main(void)
+{
 
     test_alignment();
     test_verify();

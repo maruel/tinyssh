@@ -1,8 +1,9 @@
+#include "crypto_scalarmult_curve25519.h"
 #include "cleanup.h"
 #include "fe25519.h"
-#include "crypto_scalarmult_curve25519.h"
 
-int crypto_scalarmult_curve25519_tinynacl(unsigned char *q, const unsigned char *n, const unsigned char *p) {
+int crypto_scalarmult_curve25519_tinynacl(unsigned char* q, const unsigned char* n, const unsigned char* p)
+{
 
     unsigned char e[32];
     fe x1, x2, z2, x3, z3, tmp0, tmp1;
@@ -10,7 +11,8 @@ int crypto_scalarmult_curve25519_tinynacl(unsigned char *q, const unsigned char 
     int pos;
     crypto_uint32 swap, b;
 
-    for (i = 0; i < 32; ++i) e[i] = n[i];
+    for (i = 0; i < 32; ++i)
+        e[i] = n[i];
     e[0] &= 248;
     e[31] &= 127;
     e[31] |= 64;
@@ -57,14 +59,19 @@ int crypto_scalarmult_curve25519_tinynacl(unsigned char *q, const unsigned char 
     fe25519_tobytes(q, x2);
 
     cleanup(e);
-    cleanup(tmp0); cleanup(tmp1);
-    cleanup(x1); cleanup(x2); cleanup(x3);
-    cleanup(z2); cleanup(z3);
+    cleanup(tmp0);
+    cleanup(tmp1);
+    cleanup(x1);
+    cleanup(x2);
+    cleanup(x3);
+    cleanup(z2);
+    cleanup(z3);
     return 0;
 }
 
-static const unsigned char basepoint[32] = {9};
+static const unsigned char basepoint[32] = { 9 };
 
-int crypto_scalarmult_curve25519_tinynacl_base(unsigned char *q, const unsigned char *n) {
+int crypto_scalarmult_curve25519_tinynacl_base(unsigned char* q, const unsigned char* n)
+{
     return crypto_scalarmult_curve25519_tinynacl(q, n, basepoint);
 }

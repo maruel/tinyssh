@@ -1,12 +1,15 @@
-#include <signal.h>
 #include "ssh.h"
+#include <signal.h>
 
-#define X(e,s) if (i == e) return s;
+#define X(e, s) \
+    if (i == e) \
+        return s;
 
 /*
 Return short name of signal.
 */
-const char *ssh_sigstr(int i) {
+const char* ssh_sigstr(int i)
+{
 
 #ifdef SIGABRT
     X(SIGABRT, "ABRT");
@@ -54,7 +57,8 @@ const char *ssh_sigstr(int i) {
 /*
 Return long name of signal.
 */
-const char *ssh_sigstrlong(int i) {
+const char* ssh_sigstrlong(int i)
+{
 
 #ifdef SIGABRT
     X(SIGABRT, "SIGABRT (abort)")
@@ -77,7 +81,7 @@ const char *ssh_sigstrlong(int i) {
 #ifdef SIGPIPE
     X(SIGPIPE, "SIGPIPE (broken pipe)")
 #endif
-#ifdef SIGQUIT 
+#ifdef SIGQUIT
     X(SIGQUIT, "SIGQUIT (quit)")
 #endif
 #ifdef SIGSEGV
@@ -95,4 +99,3 @@ const char *ssh_sigstrlong(int i) {
 
     return "UNKNOWN SIGNAL";
 }
-

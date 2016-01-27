@@ -10,12 +10,12 @@ Public domain.
 #endif
 #include "trymlock.h"
 
-
 /*
 The 'trymlock' function tries to
 lock the memory to make it unswappable.
 */
-void trymlock(void *x, long long len) {
+void trymlock(void* x, long long len)
+{
 #ifdef HASMLOCK
     mlock(x, len);
 #endif
@@ -26,7 +26,8 @@ void trymlock(void *x, long long len) {
 The 'trymunlock' function tries to
 unlock the memory.
 */
-void trymunlock(void *x, long long len) {
+void trymunlock(void* x, long long len)
+{
 #ifdef HASMLOCK
     munlock(x, len);
 #endif

@@ -3,6 +3,6 @@
 
 #define NUMTOSTR_LEN 41
 
-extern char *numtostr(char *, long long);
+extern char* numtostr(char*, long long);
 
 #endif

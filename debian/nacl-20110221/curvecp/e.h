@@ -3,7 +3,7 @@
 
 #include <errno.h>
 
-extern const char *e_str(int);
+extern const char* e_str(int);
 
 #ifndef EPERM
 #define EPERM (-5001)

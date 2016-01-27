@@ -6,7 +6,8 @@ Public domain.
 
 #include <unistd.h>
 
-int main(void) {
+int main(void)
+{
 
     _exit(0);
 }

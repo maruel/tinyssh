@@ -5,7 +5,7 @@
 #define crypto_core_aes128encrypt_tinynacl_INPUTBYTES 16
 #define crypto_core_aes128encrypt_tinynacl_KEYBYTES 16
 #define crypto_core_aes128encrypt_tinynacl_CONSTBYTES 0
-extern int crypto_core_aes128encrypt_tinynacl(unsigned char *,const unsigned char *,const unsigned char *,const unsigned char *);
+extern int crypto_core_aes128encrypt_tinynacl(unsigned char*, const unsigned char*, const unsigned char*, const unsigned char*);
 
 #define crypto_core_aes128encrypt crypto_core_aes128encrypt_tinynacl
 #define crypto_core_aes128encrypt_OUTPUTBYTES crypto_core_aes128encrypt_tinynacl_OUTPUTBYTES

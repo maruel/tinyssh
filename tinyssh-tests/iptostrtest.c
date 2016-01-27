@@ -4,13 +4,13 @@ Jan Mojzis
 Public domain.
 */
 
-#include <unistd.h>
-#include "fail.h"
 #include "iptostr.h"
+#include "fail.h"
+#include <unistd.h>
 
 struct vectors {
-    const char *ip;
-    const char *ipstr;
+    const char* ip;
+    const char* ipstr;
 } testvectors[] = {
     { "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000", "::" },
     { "\000\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000", "1::" },
@@ -527,48 +527,63 @@ struct vectors {
     { 0, 0 }
 };
 
-static void test_compress(void) {
+static void test_compress(void)
+{
 
     long long i, j;
-    char *buf0;
+    char* buf0;
     char buf1[IPTOSTR_LEN];
     char buf2[IPTOSTR_LEN];
 
-    for (i = 0;testvectors[i].ip; ++i) {
-        for (j = 0; j < IPTOSTR_LEN; ++j) { buf1[j] = (char)0xff; buf2[j] = 0; }
-        buf0 = iptostr(0, (unsigned char *)testvectors[i].ip);
-        iptostr(buf1, (unsigned char *)testvectors[i].ip);
-        for (j = 0; j < IPTOSTR_LEN; ++j) { 
+    for (i = 0; testvectors[i].ip; ++i) {
+        for (j = 0; j < IPTOSTR_LEN; ++j) {
+            buf1[j] = (char)0xff;
+            buf2[j] = 0;
+        }
+        buf0 = iptostr(0, (unsigned char*)testvectors[i].ip);
+        iptostr(buf1, (unsigned char*)testvectors[i].ip);
+        for (j = 0; j < IPTOSTR_LEN; ++j) {
             buf2[j] = testvectors[i].ipstr[j];
-            if (!buf2[j]) break;
+            if (!buf2[j])
+                break;
         }
         for (j = 0; j < IPTOSTR_LEN; ++j) {
-            if (buf0[j] != buf2[j]) fail("bad output");
-            if (buf1[j] != buf2[j]) fail("bad output");
+            if (buf0[j] != buf2[j])
+                fail("bad output");
+            if (buf1[j] != buf2[j])
+                fail("bad output");
         }
     }
 }
 
-static void test_bufferoverflow(void) {
+static void test_bufferoverflow(void)
+{
 
     char buf[IPTOSTR_LEN + 16];
     long long i, j;
     unsigned char ip[16];
-    char ch[2] = {0x00, (char)0xff };
+    char ch[2] = { 0x00, (char)0xff };
 
-    if ((IPTOSTR_LEN) < sizeof("ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255")) fail("IPTOSTR_LEN too small");
+    if ((IPTOSTR_LEN) < sizeof("ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"))
+        fail("IPTOSTR_LEN too small");
 
-    for (i = 0; i < 16; ++i) ip[i] = 0x11;
+    for (i = 0; i < 16; ++i)
+        ip[i] = 0x11;
     for (j = 0; j < 2; ++j) {
-        for (i = 0; i < sizeof buf; ++i) buf[i] = ch[j];
+        for (i = 0; i < sizeof buf; ++i)
+            buf[i] = ch[j];
         iptostr(buf + 8, ip);
-        for (i = 0; i < 8; ++i) if (buf[i] != ch[j]) fail("iptostr writes before output");
-        for (i = 0; i < 8; ++i) if (buf[i + IPTOSTR_LEN + 8] != ch[j]) fail("iptostr writes after output");
+        for (i = 0; i < 8; ++i)
+            if (buf[i] != ch[j])
+                fail("iptostr writes before output");
+        for (i = 0; i < 8; ++i)
+            if (buf[i + IPTOSTR_LEN + 8] != ch[j])
+                fail("iptostr writes after output");
     }
 }
 
-
-int main(void) {
+int main(void)
+{
 
     test_compress();
     test_bufferoverflow();

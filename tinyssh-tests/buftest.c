@@ -4,32 +4,33 @@ Jan Mojzis
 Public domain.
 */
 
+#include "buf.h"
+#include "byte.h"
+#include "crypto_uint32.h"
+#include "crypto_uint8.h"
+#include "fail.h"
+#include "str.h"
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <stdio.h>
-#include "fail.h"
-#include "byte.h"
-#include "buf.h"
-#include "str.h"
-#include "crypto_uint32.h"
-#include "crypto_uint8.h"
 
 /* XXX */
-static int xbuf_putnum8_(const char *fn, unsigned long long line,
-                 struct buf *b, long long uu) {
-        crypto_uint8 u = uu;
-        return buf_putnum8_(fn, line, b, u);
+static int xbuf_putnum8_(const char* fn, unsigned long long line,
+    struct buf* b, long long uu)
+{
+    crypto_uint8 u = uu;
+    return buf_putnum8_(fn, line, b, u);
 }
-static int xbuf_putnum32_(const char *fn, unsigned long long line,
-                 struct buf *b, long long uu) {
-        crypto_uint32 u = uu;
-        return buf_putnum32_(fn, line, b, u);
+static int xbuf_putnum32_(const char* fn, unsigned long long line,
+    struct buf* b, long long uu)
+{
+    crypto_uint32 u = uu;
+    return buf_putnum32_(fn, line, b, u);
 }
-
 
 struct vectors1 {
-    int (*op)(const char *, unsigned long long, struct buf *, long long);
+    int (*op)(const char*, unsigned long long, struct buf*, long long);
     long long spacelen;
     long long xlen;
 } testvectors1[] = {
@@ -42,31 +43,32 @@ struct vectors1 {
 };
 
 struct vectors2 {
-    int (*op)(const char *, unsigned long long, struct buf *, const unsigned char *, long long);
+    int (*op)(const char*, unsigned long long, struct buf*, const unsigned char*, long long);
     long long spacelen;
-    const unsigned char *x;
+    const unsigned char* x;
     long long xlen;
 } testvectors2[] = {
-    { buf_put_, 1, (unsigned char *)"", 0 }, 
-    { buf_put_, 5, (unsigned char *)"ahoj", 4 },
-    { buf_putstringlen_, 5, (unsigned char *)"", 0 },
-    { buf_putstringlen_, 9, (unsigned char *)"ahoj", 4 },
-    { 0, 0, 0, 0 }                                       
+    { buf_put_, 1, (unsigned char*)"", 0 },
+    { buf_put_, 5, (unsigned char*)"ahoj", 4 },
+    { buf_putstringlen_, 5, (unsigned char*)"", 0 },
+    { buf_putstringlen_, 9, (unsigned char*)"ahoj", 4 },
+    { 0, 0, 0, 0 }
 };
 
 struct vectors3 {
-    int (*op)(const char *, unsigned long long, struct buf *, const char *);
+    int (*op)(const char*, unsigned long long, struct buf*, const char*);
     long long spacelen;
-    const char *x;
+    const char* x;
 } testvectors3[] = {
     { buf_puts_, 1, "" },
     { buf_puts_, 5, "ahoj" },
     { buf_putstring_, 5, "" },
     { buf_putstring_, 9, "ahoj" },
-    { 0, 0, 0 }                                       
+    { 0, 0, 0 }
 };
 
-static int _test1a1(long long spacelen, int (*op)(const char *, unsigned long long, struct buf *, long long), long long xlen) {
+static int _test1a1(long long spacelen, int (*op)(const char*, unsigned long long, struct buf*, long long), long long xlen)
+{
 
     pid_t pid;
     int status;
@@ -74,21 +76,25 @@ static int _test1a1(long long spacelen, int (*op)(const char *, unsigned long lo
     struct buf b;
 
     pid = fork();
-    if (pid == -1) return -1;
+    if (pid == -1)
+        return -1;
     if (pid == 0) {
         close(2);
         buf_init(&b, bspace, spacelen);
         op(__FILE__, __LINE__, &b, xlen);
-        buf_put(&b, (unsigned char *)"", 1); /* overflow */
+        buf_put(&b, (unsigned char*)"", 1); /* overflow */
         _exit(0);
     }
 
-    while (waitpid(pid, &status, 0) != pid) {};
-    if (!WIFEXITED(status)) return -1;
+    while (waitpid(pid, &status, 0) != pid) {
+    };
+    if (!WIFEXITED(status))
+        return -1;
     return WEXITSTATUS(status);
 }
 
-static int _test1a2(long long spacelen, int (*op)(const char *, unsigned long long, struct buf *, const unsigned char *, long long), const unsigned char *x, long long xlen) {
+static int _test1a2(long long spacelen, int (*op)(const char*, unsigned long long, struct buf*, const unsigned char*, long long), const unsigned char* x, long long xlen)
+{
 
     pid_t pid;
     int status;
@@ -96,21 +102,25 @@ static int _test1a2(long long spacelen, int (*op)(const char *, unsigned long lo
     struct buf b;
 
     pid = fork();
-    if (pid == -1) return -1;
+    if (pid == -1)
+        return -1;
     if (pid == 0) {
         close(2);
         buf_init(&b, bspace, spacelen);
         op(__FILE__, __LINE__, &b, x, xlen);
-        buf_put(&b, (unsigned char *)"", 1); /* overflow */
+        buf_put(&b, (unsigned char*)"", 1); /* overflow */
         _exit(0);
     }
 
-    while (waitpid(pid, &status, 0) != pid) {};
-    if (!WIFEXITED(status)) return -1;
+    while (waitpid(pid, &status, 0) != pid) {
+    };
+    if (!WIFEXITED(status))
+        return -1;
     return WEXITSTATUS(status);
 }
 
-static int _test1a3(long long spacelen, int (*op)(const char *, unsigned long long, struct buf *, const char *), const char *x) {
+static int _test1a3(long long spacelen, int (*op)(const char*, unsigned long long, struct buf*, const char*), const char* x)
+{
 
     pid_t pid;
     int status;
@@ -118,22 +128,25 @@ static int _test1a3(long long spacelen, int (*op)(const char *, unsigned long lo
     struct buf b;
 
     pid = fork();
-    if (pid == -1) return -1;
+    if (pid == -1)
+        return -1;
     if (pid == 0) {
         close(2);
         buf_init(&b, bspace, spacelen);
         op(__FILE__, __LINE__, &b, x);
-        buf_put(&b, (unsigned char *)"", 1); /* overflow */
+        buf_put(&b, (unsigned char*)"", 1); /* overflow */
         _exit(0);
     }
 
-    while (waitpid(pid, &status, 0) != pid) {};
-    if (!WIFEXITED(status)) return -1;
+    while (waitpid(pid, &status, 0) != pid) {
+    };
+    if (!WIFEXITED(status))
+        return -1;
     return WEXITSTATUS(status);
 }
 
-
-static void _test1b1(long long spacelen, int (*op)(const char *, unsigned long long, struct buf *, long long), long long xlen) {
+static void _test1b1(long long spacelen, int (*op)(const char*, unsigned long long, struct buf*, long long), long long xlen)
+{
 
     unsigned char bspace[10];
     struct buf b;
@@ -142,7 +155,8 @@ static void _test1b1(long long spacelen, int (*op)(const char *, unsigned long l
     op(__FILE__, __LINE__, &b, xlen);
 }
 
-static void _test1b2(long long spacelen, int (*op)(const char *, unsigned long long, struct buf *, const unsigned char *, long long), const unsigned char *x, long long xlen) {
+static void _test1b2(long long spacelen, int (*op)(const char*, unsigned long long, struct buf*, const unsigned char*, long long), const unsigned char* x, long long xlen)
+{
 
     unsigned char bspace[10];
     struct buf b;
@@ -151,7 +165,8 @@ static void _test1b2(long long spacelen, int (*op)(const char *, unsigned long l
     op(__FILE__, __LINE__, &b, x, xlen);
 }
 
-static void _test1b3(long long spacelen, int (*op)(const char *, unsigned long long, struct buf *, const char *), const char *x) {
+static void _test1b3(long long spacelen, int (*op)(const char*, unsigned long long, struct buf*, const char*), const char* x)
+{
 
     unsigned char bspace[10];
     struct buf b;
@@ -160,32 +175,36 @@ static void _test1b3(long long spacelen, int (*op)(const char *, unsigned long l
     op(__FILE__, __LINE__, &b, x);
 }
 
-
-static void test1(void) {
+static void test1(void)
+{
 
     long long i;
     int r;
 
     for (i = 0; testvectors1[i].op; ++i) {
         r = _test1a1(testvectors1[i].spacelen, testvectors1[i].op, testvectors1[i].xlen);
-        if (r == 0) fail("failure");
+        if (r == 0)
+            fail("failure");
         _test1b1(testvectors1[i].spacelen, testvectors1[i].op, testvectors1[i].xlen);
     }
 
     for (i = 0; testvectors2[i].op; ++i) {
         r = _test1a2(testvectors2[i].spacelen, testvectors2[i].op, testvectors2[i].x, testvectors2[i].xlen);
-        if (r == 0) fail("failure");
+        if (r == 0)
+            fail("failure");
         _test1b2(testvectors2[i].spacelen, testvectors2[i].op, testvectors2[i].x, testvectors2[i].xlen);
     }
 
     for (i = 0; testvectors3[i].op; ++i) {
         r = _test1a3(testvectors3[i].spacelen, testvectors3[i].op, testvectors3[i].x);
-        if (r == 0) fail("failure");
+        if (r == 0)
+            fail("failure");
         _test1b3(testvectors3[i].spacelen, testvectors3[i].op, testvectors3[i].x);
     }
 }
 
-static void test2(void) {
+static void test2(void)
+{
 
     unsigned char bspace[2];
     struct buf b;
@@ -201,9 +220,9 @@ static void test2(void) {
 }
 
 struct vectors64 {
-    const char *in;
+    const char* in;
     long long inlen;
-    const char *out;
+    const char* out;
 } testvectors64[] = {
     { "\107\303\221\307\306\077\106\014\235\115\356\215\375", 13, "R8ORx8Y/RgydTe6N/Q==" },
     { "\133\253\044\246\070\374", 6, "W6skpjj8" },
@@ -408,7 +427,8 @@ struct vectors64 {
     { 0, 0, 0 }
 };
 
-static void test3(void) {
+static void test3(void)
+{
 
     unsigned char bspace[100];
     struct buf b;
@@ -419,41 +439,45 @@ static void test3(void) {
     for (i = 0; testvectors64[i].in; ++i) {
         buf_purge(&b);
         outlen = str_len(testvectors64[i].out);
-        buf_putbase64(&b, (unsigned char *)testvectors64[i].in, testvectors64[i].inlen);
+        buf_putbase64(&b, (unsigned char*)testvectors64[i].in, testvectors64[i].inlen);
         if (b.len != outlen || !byte_isequal(b.buf, outlen, testvectors64[i].out)) {
             fail("buf_putbase64 failed");
         }
     }
 }
 
-static void test4(void) {
+static void test4(void)
+{
 
     unsigned char bspace[2];
     struct buf b;
 
     buf_init(&b, bspace, 1);
-    if (buf_ready(&b, 1)) fail("buf_ready failed");
+    if (buf_ready(&b, 1))
+        fail("buf_ready failed");
 
     buf_init(&b, bspace, 2);
-    if (!buf_ready(&b, 1)) fail("buf_ready failed");
+    if (!buf_ready(&b, 1))
+        fail("buf_ready failed");
 }
 
 struct vectorssh {
-    const char *in;
+    const char* in;
     long long inlen;
-    const char *out;
+    const char* out;
     long long outlen;
 } testvectorssh[] = {
-    { "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 32, "\0\0\0\0" , 4},
-    { "\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1", 32, "\0\0\0\040\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1" , 36},
-    { "\377\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1", 32, "\0\0\0\041\0\377\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1" , 37},
-    { 0, 0, 0, 0},
+    { "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 32, "\0\0\0\0", 4 },
+    { "\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1", 32, "\0\0\0\040\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1", 36 },
+    { "\377\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1", 32, "\0\0\0\041\0\377\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1", 37 },
+    { 0, 0, 0, 0 },
 };
 
 static unsigned char bspacesh[64];
 static struct buf b;
 
-static void test5(void) {
+static void test5(void)
+{
 
     long long i;
 
@@ -461,17 +485,18 @@ static void test5(void) {
 
     for (i = 0; testvectorssh[i].in; ++i) {
         buf_purge(&b);
-        buf_putsharedsecret(&b, (unsigned char *)testvectorssh[i].in, testvectorssh[i].inlen);
+        buf_putsharedsecret(&b, (unsigned char*)testvectorssh[i].in, testvectorssh[i].inlen);
         if (b.len != testvectorssh[i].outlen || !byte_isequal(b.buf, b.len, testvectorssh[i].out)) {
             fail("buf_putbasesharedsecret failed");
         }
     }
 }
 
-int main(void) {
+int main(void)
+{
 
     test1();
-    test2(); 
+    test2();
     test3();
     test4();
     test5();

@@ -1,14 +1,16 @@
 /* Public domain. */
 #include <stdio.h>
 
-extern logwtmp(const char *, const char *, const char *);
+extern logwtmp(const char*, const char*, const char*);
 
-void fce(void) {
+void fce(void)
+{
 
     logwtmp("", "", "");
 }
 
-int main(void) {
+int main(void)
+{
 
     printf("#define HASUTMPLOGWTMP 1\n");
     return 0;

@@ -3,6 +3,6 @@
 
 #include "crypto_uint64.h"
 
-extern void uint64_pack(unsigned char *,crypto_uint64);
+extern void uint64_pack(unsigned char*, crypto_uint64);
 
 #endif

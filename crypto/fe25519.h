@@ -12,11 +12,10 @@ extern void fe25519_neg(fe, const fe);
 extern void fe25519_inv(fe, const fe);
 extern void fe25519_pow22523(fe, const fe);
 
-extern void fe25519_tobytes(unsigned char *, const fe);
-extern void fe25519_frombytes(fe, const unsigned char *);
+extern void fe25519_tobytes(unsigned char*, const fe);
+extern void fe25519_frombytes(fe, const unsigned char*);
 
 extern int fe25519_isnonzero(const fe);
 extern int fe25519_isnegative(const fe);
 
 #endif
-

@@ -2,5 +2,5 @@
 
 int open_cwd(void)
 {
-  return open_read(".");
+    return open_read(".");
 }
